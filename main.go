@@ -87,7 +87,7 @@ func main() {
 				return
 			case message := <-messageChan:
 				log.Printf("Sending message to client: %s", message)
-				if (message == "") {
+				if message == "" {
 					continue
 				}
 				err := sse.PatchElements(
