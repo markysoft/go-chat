@@ -46,34 +46,30 @@ templ home(title string) {
 						Network issues. Please try again later.
 					</p>
 				</div>
+				<h2 class="subtitle">
+					Chat away!
+				</h2>
 				<div class="columns">
 					<div class="column">
 						<div class="content">
-							Put some stuff here!
-							<div id="top-stories" data-on-load="@get('/top-stories')"></div>
-							<div id="say-hi"><button class="button is-primary" data-on-click="@get('/greeting')">Say Hi</button></div>
+							<div class="field">
+								<label class="label">Enter Message:</label>
+								<div class="control" data-on-keydown__window="evt.key === 'Enter' && @post('/message') && ($message = '')">
+									<input class="input" type="text" data-signals-message data-bind-message placeholder="Say something"/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="column" data-on-load="@get('/messages')">
+					<h2 class="label">Messages so far:</h2>
+						<div class="box">
+							<div id="messages" class="column"></div>
 						</div>
 					</div>
 				</div>
 				<footer class="footer">
 					<div id="site-error"></div>
 					<div class="content has-text-centered">
-						<strong>
-							<a
-								href="https://sliplane.io"
-								target="_blank"
-							>
-								Sliplane
-							</a>
-						</strong>
-						and
-						<strong>
-							<a href="https://hono.dev" target="_blank">
-								Hono
-							</a>
-						</strong>
-						backend,
-						<br/>
 						<strong>
 							<a
 								href="https://data-star.dev/"
