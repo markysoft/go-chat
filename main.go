@@ -101,7 +101,6 @@ func main() {
 				}
 			}
 		}
-		log.Println("Stream ended")
 	})
 
 	log.Printf("Starting server on http://localhost:%d", port)
