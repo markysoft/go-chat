@@ -4,58 +4,33 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
-
-	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 )
 
 func main() {
-
 	const port = 3000
-	opts := &server.Options{
-		Host:   "127.0.0.1",
-		Port:   4222, // Default NATS port
-		NoLog:  false,
-		NoSigs: true,
-	}
 
-	ns, err := server.NewServer(opts)
-
+	// Setup NATS
+	ns, nc, err := setupNATS()
 	if err != nil {
 		panic(err)
 	}
+	defer ns.Shutdown()
+	defer nc.Close()
 
-	// Start the server
-	go ns.Start()
-
-	// Wait for server to be ready for connections
-	if !ns.ReadyForConnections(4 * time.Second) {
-		panic("not ready for connection")
-	}
-
-	nc, err := nats.Connect(ns.ClientURL())
-
-	subject := "my-subject"
-
-	if err != nil {
-		panic(err)
-	}
+	subject := "chat-messages"
 
 	nc.Subscribe(subject, func(msg *nats.Msg) {
 		// Print message data
 		data := string(msg.Data)
-		fmt.Println(data)
-
-		// Shutdown the server (optional)
-		// ns.Shutdown()
+		fmt.Printf("Received message: %s\n", data)
 	})
 
-	// Publish data to the subject
-	nc.Publish(subject, []byte("Hello embedded NATS!"))
+	// Publish a test message
+	nc.Publish(subject, []byte("Hello from Go Chat!"))
 
 	r := chi.NewRouter()
 	homePage := home("Vanilla Go")
