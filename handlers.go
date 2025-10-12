@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"database/sql"
 	"log"
 	"net/http"
-	"database/sql"
 
 	"go-star/dal"
+
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 	"github.com/starfederation/datastar-go/datastar"
@@ -63,11 +63,11 @@ func MessageHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 		}
 		chatter, _ := dal.GetChatterByUsername(db, userID)
 		if chatter == nil {
-			 chatter, _ = dal.InsertChatter(db, userID, "Some User")
+			chatter, _ = dal.InsertChatter(db, userID, "Some User")
 		}
 
 		_, err := dal.InsertMessage(db, chatter.ID, 1, message.Message)
-		if (err != nil) {
+		if err != nil {
 			log.Printf("Failed to insert message: %v", err)
 			http.Error(w, "Failed to save message", http.StatusInternalServerError)
 			return
@@ -125,15 +125,25 @@ func MessagesHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 				if message == "" {
 					continue
 				}
-				err := sse.PatchElements(
-					fmt.Sprintf(`<div >%s</div>`, message),
-					datastar.WithSelector("#messages"),
-					datastar.WithModeAppend(),
-				)
+				allMessages, err := dal.ListMessagesForRoom(db, "Watercooler")
+				if err != nil {
+					log.Printf("Failed to list messages: %v", err)
+					continue
+				}
+				err = sse.PatchElementTempl(messages(allMessages))
 				if err != nil {
 					log.Printf("Failed to send message to client: %v", err)
 					return
 				}
+				// err := sse.PatchElements(
+				// 	fmt.Sprintf(`<div >%s</div>`, message),
+				// 	datastar.WithSelector("#messages"),
+				// 	datastar.WithModeAppend(),
+				// )
+				// if err != nil {
+				// 	log.Printf("Failed to send message to client: %v", err)
+				// 	return
+				// }
 			}
 		}
 	}
