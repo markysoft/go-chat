@@ -152,6 +152,26 @@ func InsertChatter(db *sql.DB, username, name string) (*Chatter, error) {
 	return chatter, nil
 }
 
+// GetChatterByUsername retrieves a chatter by their username
+func GetChatterByUsername(db *sql.DB, username string) (*Chatter, error) {
+	// Validate input
+	if username == "" {
+		return nil, fmt.Errorf("username cannot be empty")
+	}
+
+	stmt := `SELECT id, username, name FROM chatters WHERE username = ?`
+	var chatter Chatter
+	err := db.QueryRow(stmt, username).Scan(&chatter.ID, &chatter.Username, &chatter.Name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("chatter with username '%s' not found", username)
+		}
+		return nil, err
+	}
+
+	return &chatter, nil
+}
+
 // Message represents a chat message
 type Message struct {
 	ID        int64  `json:"id"`

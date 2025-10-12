@@ -622,3 +622,86 @@ func TestListMessagesForRoom(t *testing.T) {
 
 	t.Log("ListMessagesForRoom test completed successfully")
 }
+
+func TestGetChatterByUsername(t *testing.T) {
+	testDBName := "test_get_chatter_by_username"
+	defer os.Remove("./" + testDBName + ".db")
+
+	db, err := SetupDB(testDBName)
+	if err != nil {
+		t.Fatalf("SetupDB() failed: %v", err)
+	}
+	defer db.Close()
+
+	// Insert test chatters
+	chatter1, err := InsertChatter(db, "alice", "Alice Smith")
+	if err != nil {
+		t.Fatalf("Failed to insert chatter1: %v", err)
+	}
+
+	chatter2, err := InsertChatter(db, "bob", "Bob Johnson")
+	if err != nil {
+		t.Fatalf("Failed to insert chatter2: %v", err)
+	}
+
+	// Test 1: Get existing chatter by username
+	retrievedChatter, err := GetChatterByUsername(db, "alice")
+	if err != nil {
+		t.Fatalf("GetChatterByUsername failed for 'alice': %v", err)
+	}
+
+	// Verify the retrieved chatter matches the inserted one
+	if retrievedChatter.ID != chatter1.ID {
+		t.Errorf("Expected ID %d, got %d", chatter1.ID, retrievedChatter.ID)
+	}
+	if retrievedChatter.Username != chatter1.Username {
+		t.Errorf("Expected username '%s', got '%s'", chatter1.Username, retrievedChatter.Username)
+	}
+	if retrievedChatter.Name != chatter1.Name {
+		t.Errorf("Expected name '%s', got '%s'", chatter1.Name, retrievedChatter.Name)
+	}
+
+	// Test 2: Get another existing chatter by username
+	retrievedChatter2, err := GetChatterByUsername(db, "bob")
+	if err != nil {
+		t.Fatalf("GetChatterByUsername failed for 'bob': %v", err)
+	}
+
+	if retrievedChatter2.ID != chatter2.ID {
+		t.Errorf("Expected ID %d, got %d", chatter2.ID, retrievedChatter2.ID)
+	}
+	if retrievedChatter2.Username != "bob" {
+		t.Errorf("Expected username 'bob', got '%s'", retrievedChatter2.Username)
+	}
+	if retrievedChatter2.Name != "Bob Johnson" {
+		t.Errorf("Expected name 'Bob Johnson', got '%s'", retrievedChatter2.Name)
+	}
+
+	// Test 3: Try to get non-existent chatter
+	_, err = GetChatterByUsername(db, "nonexistent")
+	if err == nil {
+		t.Errorf("Expected error for non-existent chatter, got nil")
+	}
+	expectedErrorMsg := "chatter with username 'nonexistent' not found"
+	if err.Error() != expectedErrorMsg {
+		t.Errorf("Expected error message '%s', got '%s'", expectedErrorMsg, err.Error())
+	}
+
+	// Test 4: Try to get chatter with empty username
+	_, err = GetChatterByUsername(db, "")
+	if err == nil {
+		t.Errorf("Expected error for empty username, got nil")
+	}
+	expectedEmptyErrorMsg := "username cannot be empty"
+	if err.Error() != expectedEmptyErrorMsg {
+		t.Errorf("Expected error message '%s', got '%s'", expectedEmptyErrorMsg, err.Error())
+	}
+
+	// Test 5: Case sensitivity test
+	_, err = GetChatterByUsername(db, "ALICE")
+	if err == nil {
+		t.Errorf("Expected error for case mismatch 'ALICE' (usernames should be case-sensitive)")
+	}
+
+	t.Log("GetChatterByUsername test completed successfully")
+}
