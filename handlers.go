@@ -7,7 +7,6 @@ import (
 
 	"go-star/dal"
 
-	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 	"github.com/starfederation/datastar-go/datastar"
 )
@@ -17,34 +16,6 @@ var subject = "chat-messages"
 type ChatItem struct {
 	Message  string `json:"message"`
 	Username string `json:"username"`
-}
-
-// generateGUID creates a new GUID using the google/uuid package
-func generateGUID() string {
-	return uuid.New().String()
-}
-
-// getUserID checks for existing userId cookie or creates a new one
-func getUserID(w http.ResponseWriter, r *http.Request) (string, error) {
-	// Check for existing cookie
-	cookie, err := r.Cookie("chat-userid")
-	if err == nil && cookie.Value != "" {
-		return cookie.Value, nil
-	}
-
-	// Generate new GUID
-	userID := generateGUID()
-
-	// Set the cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     "chat-userid",
-		Value:    userID,
-		Path:     "/",
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-	})
-
-	return userID, nil
 }
 
 func MessageHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
@@ -135,15 +106,6 @@ func MessagesHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 					log.Printf("Failed to send message to client: %v", err)
 					return
 				}
-				// err := sse.PatchElements(
-				// 	fmt.Sprintf(`<div >%s</div>`, message),
-				// 	datastar.WithSelector("#messages"),
-				// 	datastar.WithModeAppend(),
-				// )
-				// if err != nil {
-				// 	log.Printf("Failed to send message to client: %v", err)
-				// 	return
-				// }
 			}
 		}
 	}
