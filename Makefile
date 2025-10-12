@@ -14,6 +14,9 @@ debug: gen
 	dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient
 
 test:
+	go test ./...
+
+test-v:
 	go test -v ./...
 
 fmt:

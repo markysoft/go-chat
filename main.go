@@ -19,16 +19,14 @@ func main() {
 	}
 	defer cleanup()
 
-	subject := "chat-messages"
-
 	r := chi.NewRouter()
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		templ.Handler(home("Vanilla Go")).ServeHTTP(w, r)
 	})
-	
-	r.Post("/message", MessageHandler(nc, subject))
-	r.Get("/messages", MessagesHandler(nc, subject))
+
+	r.Post("/message", MessageHandler(nc))
+	r.Get("/messages", MessagesHandler(nc))
 
 	log.Printf("Starting server on http://localhost:%d", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {

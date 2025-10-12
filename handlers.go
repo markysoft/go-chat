@@ -9,12 +9,14 @@ import (
 	"github.com/starfederation/datastar-go/datastar"
 )
 
+var subject = "chat-messages"
+
 type ChatItem struct {
 	Message  string `json:"message"`
 	Username string `json:"username"`
 }
 
-func MessageHandler(nc *nats.Conn, subject string) http.HandlerFunc {
+func MessageHandler(nc *nats.Conn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		message := &ChatItem{}
 		if err := datastar.ReadSignals(r, message); err != nil {
@@ -29,7 +31,7 @@ func MessageHandler(nc *nats.Conn, subject string) http.HandlerFunc {
 }
 
 // MessagesHandler handles the SSE stream for chat messages
-func MessagesHandler(nc *nats.Conn, subject string) http.HandlerFunc {
+func MessagesHandler(nc *nats.Conn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Client connected to messages stream")
 		sse := datastar.NewSSE(w, r)
