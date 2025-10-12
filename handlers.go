@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
@@ -18,7 +17,7 @@ type ChatItem struct {
 	Username string `json:"username"`
 }
 
-func MessageHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
+func (app *application) MessageHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		message := &ChatItem{}
 		if err := datastar.ReadSignals(r, message); err != nil {
@@ -32,18 +31,18 @@ func MessageHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Failed to initialize user session", http.StatusInternalServerError)
 			return
 		}
-		chatter, _ := dal.GetChatterByUsername(db, userID)
+		chatter, _ := dal.GetChatterByUsername(app.db, userID)
 		if chatter == nil {
-			chatter, _ = dal.InsertChatter(db, userID, "Some User")
+			chatter, _ = dal.InsertChatter(app.db, userID, "Some User")
 		}
 
-		_, err := dal.InsertMessage(db, chatter.ID, 1, message.Message)
+		_, err := dal.InsertMessage(app.db, chatter.ID, 1, message.Message)
 		if err != nil {
 			log.Printf("Failed to insert message: %v", err)
 			http.Error(w, "Failed to save message", http.StatusInternalServerError)
 			return
 		}
-		nc.Publish(subject, []byte(message.Message))
+		app.nc.Publish(subject, []byte(message.Message))
 
 		// Send 204 No Content - indicates success but no response body
 		w.WriteHeader(http.StatusNoContent)
@@ -51,7 +50,7 @@ func MessageHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 }
 
 // MessagesHandler handles the SSE stream for chat messages
-func MessagesHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
+func (app *application) MessagesHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check for userId cookie or generate a new one
 		userID, err := getUserID(w, r)
@@ -68,7 +67,7 @@ func MessagesHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 		messageChan := make(chan string, 10)
 
 		// Subscribe to NATS and forward messages to the channel
-		sub, err := nc.Subscribe(subject, func(msg *nats.Msg) {
+		sub, err := app.nc.Subscribe(subject, func(msg *nats.Msg) {
 			log.Println("message received from NATS")
 			data := string(msg.Data)
 			select {
@@ -96,7 +95,7 @@ func MessagesHandler(nc *nats.Conn, db *sql.DB) http.HandlerFunc {
 				if message == "" {
 					continue
 				}
-				allMessages, err := dal.ListMessagesForRoom(db, "Watercooler")
+				allMessages, err := dal.ListMessagesForRoom(app.db, "Watercooler")
 				if err != nil {
 					log.Printf("Failed to list messages: %v", err)
 					continue
