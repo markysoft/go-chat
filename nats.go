@@ -8,10 +8,11 @@ import (
 )
 
 // setupNATS creates and starts the embedded NATS server
-func setupNATS() (*server.Server, *nats.Conn, error) {
+// Returns the server, connection, cleanup function, and error
+func setupNATS() (*nats.Conn, func(), error) {
 	opts := &server.Options{
 		Host:   "127.0.0.1",
-		Port:   4222,
+		Port:   4223,
 		NoLog:  true,
 		NoSigs: true,
 	}
@@ -26,13 +27,20 @@ func setupNATS() (*server.Server, *nats.Conn, error) {
 
 	// Wait for server to be ready for connections
 	if !ns.ReadyForConnections(4 * time.Second) {
-		return nil, nil, err
+		panic("NATS Server not ready in time")
 	}
 
 	nc, err := nats.Connect(ns.ClientURL())
 	if err != nil {
+		ns.Shutdown() // Clean up server if connection fails
 		return nil, nil, err
 	}
 
-	return ns, nc, nil
+	// Return cleanup function that handles both nc.Close() and ns.Shutdown()
+	cleanup := func() {
+		nc.Close()
+		ns.Shutdown()
+	}
+
+	return nc, cleanup, nil
 }
