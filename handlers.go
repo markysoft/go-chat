@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"go-star/dal"
 	"log"
 	"net/http"
-
-	"go-star/dal"
 
 	"github.com/nats-io/nats.go"
 	"github.com/starfederation/datastar-go/datastar"
@@ -19,27 +19,27 @@ type ChatItem struct {
 
 func (app *application) MessageHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		message := &ChatItem{}
 		if err := datastar.ReadSignals(r, message); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			app.serverError(w, r, err)
 			return
 		}
 
-		userID, userErr := getUserID(w, r)
-		if userErr != nil {
-			log.Printf("Failed to get or generate user ID: %v", userErr)
-			http.Error(w, "Failed to initialize user session", http.StatusInternalServerError)
+		userID, err := getUserID(w, r)
+		if err != nil {
+			app.serverError(w, r, fmt.Errorf("failed to initialize user session: %w", err))
 			return
 		}
+
 		chatter, _ := dal.GetChatterByUsername(app.db, userID)
 		if chatter == nil {
 			chatter, _ = dal.InsertChatter(app.db, userID, "Some User")
 		}
 
-		_, err := dal.InsertMessage(app.db, chatter.ID, 1, message.Message)
+		_, err = dal.InsertMessage(app.db, chatter.ID, 1, message.Message)
 		if err != nil {
-			log.Printf("Failed to insert message: %v", err)
-			http.Error(w, "Failed to save message", http.StatusInternalServerError)
+			app.serverError(w, r, fmt.Errorf("failed to save message: %w", err))
 			return
 		}
 		app.nc.Publish(subject, []byte(message.Message))
@@ -55,8 +55,7 @@ func (app *application) MessagesHandler() http.HandlerFunc {
 		// Check for userId cookie or generate a new one
 		userID, err := getUserID(w, r)
 		if err != nil {
-			log.Printf("Failed to get or generate user ID: %v", err)
-			http.Error(w, "Failed to initialize user session", http.StatusInternalServerError)
+			app.serverError(w, r, fmt.Errorf("failed to get or generate user ID: %w", err))
 			return
 		}
 

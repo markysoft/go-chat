@@ -29,14 +29,14 @@ func home(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home.templ`, Line: 10, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home.templ`, Line: 12, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -49,13 +49,13 @@ func home(title string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home.templ`, Line: 35, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home.templ`, Line: 37, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h1><p class=\"subtitle\">Go, Bulma, Datastar</p><div data-on-datastar-fetch=\"$_fetchError = evt.detail.type === 'retrying' || evt.detail.type === 'retry-failed'\"></div><div class=\"box error-message\" data-show=\"$_fetchError\" style=\"position: fixed; bottom: 0em; left: 0em; padding: 1em; z-index: 1000; display: none;\"><p class=\"has-text-danger is-size-4\">Network issues. Please try again later.</p></div><h2 class=\"subtitle\">Chat away!</h2><div class=\"columns\"><div class=\"column\"><div class=\"content\"><div class=\"field\"><label class=\"label\">Enter Message:</label><div class=\"control\" data-on-keydown__window=\"evt.key === 'Enter' && @post('/message') && ($message = '')\"><input class=\"input\" type=\"text\" data-signals-message data-bind-message placeholder=\"Say something\"></div></div></div></div><div class=\"column\" data-on-load=\"@get('/messages')\"><h2 class=\"label\">Messages so far:</h2><div class=\"box\"><div id=\"messages\" class=\"column\"></div></div></div></div><footer class=\"footer\"><div id=\"site-error\"></div><div class=\"content has-text-centered\"><strong><a href=\"https://data-star.dev/\" target=\"_blank\">DataStar</a></strong> + <strong><a href=\"https://bulma.io/\" target=\"_blank\">Bulma</a></strong> & <strong><a href=\"https://fontawesome.com\">Font Awesome</a></strong> frontend</div></footer></div></section></body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h1><p class=\"subtitle\">Go, Bulma, Datastar</p><div data-on-datastar-fetch=\"$_fetchError = evt.detail.type === 'retrying' || evt.detail.type === 'retry-failed'\"></div><div class=\"box error-message\" data-show=\"$_fetchError\" style=\"position: fixed; bottom: 0em; left: 0em; padding: 1em; z-index: 1000; display: none;\"><p class=\"has-text-danger is-size-4\">Network issues. Please try again later.</p></div><h2 class=\"subtitle\">Chat away!</h2><div class=\"columns\"><div class=\"column\"><div class=\"content\"><div class=\"field\"><label class=\"label\">Enter Message:</label><div class=\"control\" data-on-keydown__window=\"evt.key === 'Enter' && @post('/message') && ($message = '')\"><input class=\"input\" type=\"text\" data-signals-message data-bind-message placeholder=\"Say something\"></div></div></div></div><div class=\"column\" data-on-load=\"@get('/messages')\"><h2 class=\"label\">Messages so far:</h2><div class=\"box\"><div id=\"messages\" class=\"column\"></div></div></div></div><footer class=\"footer\"><div id=\"site-error\"></div><div class=\"content has-text-centered\"><strong><a href=\"https://data-star.dev/\" target=\"_blank\">DataStar</a></strong> + <strong><a href=\"https://bulma.io/\" target=\"_blank\">Bulma</a></strong> & <strong><a href=\"https://fontawesome.com\">Font Awesome</a></strong> frontend</div></footer></div></section></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
