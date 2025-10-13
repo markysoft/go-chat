@@ -22,31 +22,47 @@ func (app *application) MessageHandler() http.HandlerFunc {
 
 		message := &ChatItem{}
 		if err := datastar.ReadSignals(r, message); err != nil {
+			app.serverError(w, r, fmt.Errorf("failed to read message signal: %w", err))
+			return
+		}
+
+		chatter, err := app.getChatter(w, r)
+		if err != nil {
 			app.serverError(w, r, err)
 			return
 		}
 
-		userID, err := getUserID(w, r)
-		if err != nil {
-			app.serverError(w, r, fmt.Errorf("failed to initialize user session: %w", err))
-			return
-		}
-
-		chatter, _ := dal.GetChatterByUsername(app.db, userID)
-		if chatter == nil {
-			chatter, _ = dal.InsertChatter(app.db, userID, "Some User")
-		}
-
 		_, err = dal.InsertMessage(app.db, chatter.ID, 1, message.Message)
 		if err != nil {
-			app.serverError(w, r, fmt.Errorf("failed to save message: %w", err))
+			app.serverError(w, r, fmt.Errorf("failed to insert message: %w", err))
 			return
 		}
-		app.nc.Publish(subject, []byte(message.Message))
 
-		// Send 204 No Content - indicates success but no response body
+		err = app.nc.Publish(subject, []byte(message.Message))
+		if err != nil {
+			app.serverError(w, r, fmt.Errorf("failed to publish message: %w", err))
+			return
+		}
 		w.WriteHeader(http.StatusNoContent)
 	}
+}
+
+func (app *application) getChatter(w http.ResponseWriter, r *http.Request) (*dal.Chatter, error) {
+	userID, err := getUserID(w, r)
+	if err != nil {
+		app.serverError(w, r, fmt.Errorf("failed to initialize user session: %w", err))
+		return nil, err
+	}
+
+	chatter, _ := dal.GetChatterByUsername(app.db, userID)
+	if chatter == nil {
+		chatter, err = dal.InsertChatter(app.db, userID, "Some User")
+		if err != nil {
+			app.serverError(w, r, fmt.Errorf("failed to create new chatter: %w", err))
+			return nil, err
+		}
+	}
+	return chatter, nil
 }
 
 // MessagesHandler handles the SSE stream for chat messages
@@ -77,16 +93,14 @@ func (app *application) MessagesHandler() http.HandlerFunc {
 			}
 		})
 		if err != nil {
-			http.Error(w, "Failed to subscribe to messages", http.StatusInternalServerError)
+			app.serverError(w, r, fmt.Errorf("failed to subscribe to messages: %w", err))
 			return
 		}
 		defer sub.Unsubscribe()
 
-		// Keep the connection alive and listen for messages
 		for {
 			select {
 			case <-r.Context().Done():
-				// Client disconnected
 				log.Println("Client disconnected from messages stream")
 				return
 			case message := <-messageChan:
