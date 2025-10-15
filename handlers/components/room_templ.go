@@ -65,20 +65,20 @@ func RoomPage(room dal.Room, user dal.Chatter, signals RoomSignals) templ.Compon
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2></div><p>Welcome ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2></div><p>Welcome <strong>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/components/room.templ`, Line: 19, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/components/room.templ`, Line: 19, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><div data-signals=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "!</strong></p><div data-signals=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -104,7 +104,7 @@ func RoomPage(room dal.Room, user dal.Chatter, signals RoomSignals) templ.Compon
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></div><hr><div class=\"columns\"><div class=\"column\"><div class=\"content\"><div class=\"field\"><label class=\"label\">Enter Message:</label><div class=\"control\" data-on-keydown__window=\"evt.key === 'Enter' && @post('/room/message') && ($message = '')\"><input class=\"input\" type=\"text\" data-signals-message data-bind-message placeholder=\"Say something\"></div></div></div></div><div class=\"column\" data-on-load=\"@get('/messages')\"><h2 class=\"label\">Messages so far:</h2><div class=\"box\"><div id=\"messages\" class=\"column\"></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></div><hr><div class=\"columns\"><div class=\"column\"><div class=\"content\"><div class=\"field\"><label class=\"label\">Enter Message:</label><div class=\"control\" data-on-keydown__window=\"evt.key === 'Enter' && @post('/room/message') && ($message = '')\"><input class=\"input\" type=\"text\" data-signals-message data-bind-message placeholder=\"Say something\"></div></div></div></div><div class=\"column\" data-on-load=\"@get('/messages')\"><h2 class=\"label\">Chat log</h2><div class=\"box\"><div id=\"messages\" class=\"column\"></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

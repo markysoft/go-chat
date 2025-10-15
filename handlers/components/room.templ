@@ -16,7 +16,7 @@ templ RoomPage(room dal.Room, user dal.Chatter, signals RoomSignals) {
 		<div class="room">
 			<h2 class="subtitle">{ room.Description }</h2>
 		</div>
-		<p>Welcome { user.Name }</p>
+		<p>Welcome <strong>{ user.Name }!</strong></p>
 		<div data-signals={ templ.JSONString(signals) } data-on-load={ datastar.GetSSE("/room/messages") }></div>
 		<hr/>
 		<div class="columns">
@@ -31,7 +31,7 @@ templ RoomPage(room dal.Room, user dal.Chatter, signals RoomSignals) {
 				</div>
 			</div>
 			<div class="column" data-on-load="@get('/messages')">
-				<h2 class="label">Messages so far:</h2>
+				<h2 class="label">Chat log</h2>
 				<div class="box">
 					<div id="messages" class="column"></div>
 				</div>

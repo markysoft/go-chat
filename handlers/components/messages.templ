@@ -2,28 +2,35 @@ package components
 
 import "go-star/common/dal"
 
+func getMessageClass(isUser bool) string {
+	if isUser {
+		return "message is-info is-small"
+	}
+	return "message is-primary is-small"
+}
+
+func getMessageStyle(isUser bool) string {
+	if isUser {
+		return "margin-right: 2rem;"
+	}
+	return "margin-left: 2rem;"
+}
+
+templ Message(message dal.MessageWithChatter, isUser bool) {
+	<article class={ getMessageClass(isUser) } style={ getMessageStyle(isUser) }>
+		<div class="message-header">
+			<p>{ message.ChatterName }</p>
+		</div>
+		<div class="message-body">
+			{ message.Content }
+		</div>
+	</article>
+}
+
 templ Messages(messages []dal.MessageWithChatter, username string) {
 	<div id="messages" class="column">
 		for _, item := range messages {
-			if item.Username == username {
-				<article class="message is-info is-small" style="margin-left: 2rem;">
-					<div class="message-header">
-						<p>{ item.ChatterName }</p>
-					</div>
-					<div class="message-body">
-						{ item.Content }
-					</div>
-				</article>
-			} else {
-				<article class="message is-primary is-small">
-					<div class="message-header">
-						<p>{ item.ChatterName }</p>
-					</div>
-					<div class="message-body">
-						{ item.Content }
-					</div>
-				</article>
-			}
+			@Message(item, item.Username == username)
 		}
 	</div>
 }
