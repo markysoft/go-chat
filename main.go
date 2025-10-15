@@ -1,23 +1,24 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"go-star/dal"
+	"go-star/handlers"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
-	"database/sql"
-	"github.com/nats-io/nats.go"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
+	"github.com/nats-io/nats.go"
 )
 
 type application struct {
 	logger *slog.Logger
-	db		 *sql.DB
-	nc		 *nats.Conn
+	db     *sql.DB
+	nc     *nats.Conn
 }
 
 func main() {
@@ -50,6 +51,9 @@ func main() {
 
 	r.Post("/message", app.MessageHandler())
 	r.Get("/messages", app.MessagesHandler())
+
+	rh := handlers.NewHandlers(logger, db, nc)
+	r.Get("/rooms", rh.RoomPage())
 
 	log.Printf("Starting server on http://localhost:%d", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {

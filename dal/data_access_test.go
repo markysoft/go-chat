@@ -1,6 +1,7 @@
 package dal
 
 import (
+	"database/sql"
 	"os"
 	"testing"
 )
@@ -704,4 +705,114 @@ func TestGetChatterByUsername(t *testing.T) {
 	}
 
 	t.Log("GetChatterByUsername test completed successfully")
+}
+
+func TestListRooms(t *testing.T) {
+	testDBName := "test_list_rooms"
+	defer os.Remove("./" + testDBName + ".db")
+
+	db, err := SetupDB(testDBName)
+	if err != nil {
+		t.Fatalf("SetupDB() failed: %v", err)
+	}
+	defer db.Close()
+
+	// Test 1: Check that the initial Watercooler room exists
+	rooms, err := ListRooms(db)
+	if err != nil {
+		t.Fatalf("ListRooms failed: %v", err)
+	}
+
+	if len(rooms) != 1 {
+		t.Errorf("Expected 1 initial room, got %d", len(rooms))
+	}
+
+	if len(rooms) > 0 {
+		if rooms[0].Name != "Watercooler" {
+			t.Errorf("Expected initial room name 'Watercooler', got '%s'", rooms[0].Name)
+		}
+		if rooms[0].Description != "place to hang" {
+			t.Errorf("Expected initial room description 'place to hang', got '%s'", rooms[0].Description)
+		}
+		if rooms[0].ID <= 0 {
+			t.Errorf("Expected room ID > 0, got %d", rooms[0].ID)
+		}
+	}
+
+	// Test 2: Add more rooms and verify ordering
+	testRooms := []struct {
+		name        string
+		description string
+	}{
+		{"General", "General discussion"},
+		{"Development", "Development team chat"},
+		{"Random", "Random topics"},
+		{"Alpha", "Should be first alphabetically"},
+	}
+
+	for _, room := range testRooms {
+		_, err := db.Exec("INSERT INTO rooms (name, description) VALUES (?, ?)", room.name, room.description)
+		if err != nil {
+			t.Fatalf("Failed to insert test room '%s': %v", room.name, err)
+		}
+	}
+
+	// Get all rooms again
+	allRooms, err := ListRooms(db)
+	if err != nil {
+		t.Fatalf("ListRooms failed after adding rooms: %v", err)
+	}
+
+	expectedCount := 1 + len(testRooms) // Initial + test rooms
+	if len(allRooms) != expectedCount {
+		t.Errorf("Expected %d rooms, got %d", expectedCount, len(allRooms))
+	}
+
+	// Test 3: Verify alphabetical ordering
+	expectedOrder := []string{"Alpha", "Development", "General", "Random", "Watercooler"}
+	if len(allRooms) == len(expectedOrder) {
+		for i, room := range allRooms {
+			if room.Name != expectedOrder[i] {
+				t.Errorf("Room %d: expected name '%s', got '%s'", i, expectedOrder[i], room.Name)
+			}
+		}
+	}
+
+	// Test 4: Verify all fields are populated
+	for i, room := range allRooms {
+		if room.ID <= 0 {
+			t.Errorf("Room %d (%s): ID should be > 0, got %d", i, room.Name, room.ID)
+		}
+		if room.Name == "" {
+			t.Errorf("Room %d: Name should not be empty", i)
+		}
+		// Description can be empty, but should not be nil for string type
+	}
+
+	// Test 5: Test with empty database (no rooms)
+	emptyTestDBName := "test_list_rooms_empty"
+	defer os.Remove("./" + emptyTestDBName + ".db")
+
+	emptyDB, err := sql.Open("sqlite", "./"+emptyTestDBName+".db")
+	if err != nil {
+		t.Fatalf("Failed to create empty test database: %v", err)
+	}
+	defer emptyDB.Close()
+
+	// Create only the rooms table, no initial data
+	_, err = emptyDB.Exec("CREATE TABLE rooms (id INTEGER NOT NULL PRIMARY KEY, name TEXT, description TEXT)")
+	if err != nil {
+		t.Fatalf("Failed to create rooms table in empty database: %v", err)
+	}
+
+	emptyRooms, err := ListRooms(emptyDB)
+	if err != nil {
+		t.Fatalf("ListRooms failed on empty database: %v", err)
+	}
+
+	if len(emptyRooms) != 0 {
+		t.Errorf("Expected 0 rooms in empty database, got %d", len(emptyRooms))
+	}
+
+	t.Log("ListRooms test completed successfully")
 }

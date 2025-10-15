@@ -249,3 +249,37 @@ func ListMessagesForRoom(db *sql.DB, roomName string) ([]MessageWithChatter, err
 
 	return messages, nil
 }
+
+// Room represents a chat room
+type Room struct {
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// ListRooms retrieves all rooms from the database
+func ListRooms(db *sql.DB) ([]Room, error) {
+	query := `SELECT id, name, description FROM rooms ORDER BY name ASC`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var rooms []Room
+	for rows.Next() {
+		var room Room
+		err := rows.Scan(&room.ID, &room.Name, &room.Description)
+		if err != nil {
+			return nil, err
+		}
+		rooms = append(rooms, room)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return rooms, nil
+}
