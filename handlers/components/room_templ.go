@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/starfederation/datastar-go/datastar"
-	"go-star/dal"
+	"go-star/common/dal"
 	"go-star/layout"
 )
 
@@ -104,7 +104,7 @@ func RoomPage(room dal.Room, user dal.Chatter, signals RoomSignals) templ.Compon
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></div><div class=\"columns\"><div class=\"column\"><div class=\"content\"><div class=\"field\"><label class=\"label\">Enter Message:</label><div class=\"control\" data-on-keydown__window=\"evt.key === 'Enter' && @post('/room/message') && ($message = '')\"><input class=\"input\" type=\"text\" data-signals-message data-bind-message placeholder=\"Say something\"></div></div></div></div><div class=\"column\" data-on-load=\"@get('/messages')\"><h2 class=\"label\">Messages so far:</h2><div class=\"box\"><div id=\"messages\" class=\"column\"></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></div><hr><div class=\"columns\"><div class=\"column\"><div class=\"content\"><div class=\"field\"><label class=\"label\">Enter Message:</label><div class=\"control\" data-on-keydown__window=\"evt.key === 'Enter' && @post('/room/message') && ($message = '')\"><input class=\"input\" type=\"text\" data-signals-message data-bind-message placeholder=\"Say something\"></div></div></div></div><div class=\"column\" data-on-load=\"@get('/messages')\"><h2 class=\"label\">Messages so far:</h2><div class=\"box\"><div id=\"messages\" class=\"column\"></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

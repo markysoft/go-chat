@@ -172,6 +172,19 @@ func GetChatterByUsername(db *sql.DB, username string) (*Chatter, error) {
 	return &chatter, nil
 }
 
+// TotalChatters returns the total number of chatters in the database
+func TotalChatters(db *sql.DB) (int64, error) {
+	query := `SELECT COUNT(*) FROM chatters`
+
+	var count int64
+	err := db.QueryRow(query).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // Message represents a chat message
 type Message struct {
 	ID        int64  `json:"id"`

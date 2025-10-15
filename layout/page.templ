@@ -32,6 +32,30 @@ templ Page(title string, subtitle string) {
     </style>
 		</head>
 		<body>
+        <nav class="navbar is-primary has-background-primary" role="navigation" aria-label="main navigation">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+              <strong>Go Chat</strong>
+            </a>
+            <a role="button" class="navbar-burger" data-class-is-active="$_showMenu" aria-label="menu" aria-expanded="false" data-on-click="$_showMenu = !$_showMenu">
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
+          </div>
+
+          <div class="navbar-menu" data-class-is-active="$_showMenu">
+            <div class="navbar-start">
+              <a class="navbar-item" href="/">Home</a>
+            </div>
+
+            <div class="navbar-end">
+              <div class="navbar-item">
+
+              </div>
+            </div>
+          </div>
+        </nav>		
 			<section class="section">
 				<div class="container">
 					<h1 class="title">{ title }</h1>

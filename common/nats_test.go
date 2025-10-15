@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 
 func TestSetupNATS(t *testing.T) {
 	// Test basic NATS setup
-	nc, cleanup, err := setupNATS()
+	nc, cleanup, err := SetupNATS()
 	if err != nil {
 		t.Fatalf("setupNATS() failed: %v", err)
 	}
@@ -35,7 +35,7 @@ func TestSetupNATS(t *testing.T) {
 
 func TestSetupNATSPublishSubscribe(t *testing.T) {
 	// Test that we can publish and subscribe
-	nc, cleanup, err := setupNATS()
+	nc, cleanup, err := SetupNATS()
 	if err != nil {
 		t.Fatalf("setupNATS() failed: %v", err)
 	}
@@ -74,7 +74,7 @@ func TestSetupNATSPublishSubscribe(t *testing.T) {
 }
 
 func TestSetupNATSMultipleConnections(t *testing.T) {
-	nc1, cleanup1, err := setupNATS()
+	nc1, cleanup1, err := SetupNATS()
 	if err != nil {
 		t.Fatalf("First setupNATS() failed: %v", err)
 	}
@@ -129,7 +129,7 @@ func TestSetupNATSMultipleConnections(t *testing.T) {
 
 func TestSetupNATSCleanup(t *testing.T) {
 	// Test that cleanup function works properly
-	nc, cleanup, err := setupNATS()
+	nc, cleanup, err := SetupNATS()
 	if err != nil {
 		t.Fatalf("setupNATS() failed: %v", err)
 	}
@@ -161,7 +161,7 @@ func TestSetupNATSCleanup(t *testing.T) {
 
 func TestSetupNATSRequestReply(t *testing.T) {
 	// Test request-reply pattern
-	nc, cleanup, err := setupNATS()
+	nc, cleanup, err := SetupNATS()
 	if err != nil {
 		t.Fatalf("setupNATS() failed: %v", err)
 	}
@@ -196,7 +196,7 @@ func TestSetupNATSRequestReply(t *testing.T) {
 
 func TestSetupNATSConnectionStatus(t *testing.T) {
 	// Test connection status and server info
-	nc, cleanup, err := setupNATS()
+	nc, cleanup, err := SetupNATS()
 	if err != nil {
 		t.Fatalf("setupNATS() failed: %v", err)
 	}

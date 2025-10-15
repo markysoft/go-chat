@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "go-star/dal"
+import "go-star/common/dal"
 import "go-star/layout"
 import "fmt"
 

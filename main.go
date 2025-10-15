@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
-	"go-star/dal"
+	"go-star/common/dal"
 	"go-star/routes"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
+
+	"go-star/common"
 )
 
 func main() {
@@ -15,7 +17,7 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	// Setup NATS
-	nc, cleanup, err := setupNATS()
+	nc, cleanup, err := common.SetupNATS()
 	if err != nil {
 		panic(err)
 	}

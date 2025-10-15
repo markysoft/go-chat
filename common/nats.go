@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"time"
@@ -7,9 +7,9 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-// setupNATS creates and starts the embedded NATS server
+// SetupNATS creates and starts the embedded NATS server
 // Returns the server, connection, cleanup function, and error
-func setupNATS() (*nats.Conn, func(), error) {
+func SetupNATS() (*nats.Conn, func(), error) {
 	opts := &server.Options{
 		Host:   "127.0.0.1",
 		Port:   4223,

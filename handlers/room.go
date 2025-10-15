@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"go-star/common"
-	"go-star/dal"
+	"go-star/common/dal"
 	"go-star/handlers/components"
 	"log"
 	"log/slog"
@@ -27,7 +27,6 @@ type ChatItem struct {
 	Message  string `json:"message"`
 	Username string `json:"username"`
 }
-
 
 var subject = "chat-messages"
 
@@ -190,7 +189,12 @@ func (app *Handlers) getChatter(w http.ResponseWriter, r *http.Request) (*dal.Ch
 
 	chatter, _ := dal.GetChatterByUsername(app.db, userID)
 	if chatter == nil {
-		chatter, err = dal.InsertChatter(app.db, userID, "Some User")
+		totalChatters, err := dal.TotalChatters(app.db)
+		if err != nil {
+			app.serverError(w, r, fmt.Errorf("failed to get total chatters: %w", err))
+			return nil, err
+		}
+		chatter, err = dal.InsertChatter(app.db, userID, fmt.Sprintf("User No. %d", totalChatters+1))
 		if err != nil {
 			app.serverError(w, r, fmt.Errorf("failed to create new chatter: %w", err))
 			return nil, err

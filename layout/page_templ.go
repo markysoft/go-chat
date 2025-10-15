@@ -42,14 +42,14 @@ func Page(title string, subtitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css\"><script src=\"https://kit.fontawesome.com/c2b6fd3803.js\" crossorigin=\"anonymous\"></script><script type=\"module\" src=\"https://cdn.jsdelivr.net/gh/starfederation/datastar@main/bundles/datastar.js\"></script><style>\n        ul.no-bullets {\n        list-style-type: none;\n        }\n\n        .xspinner {\n        padding: 5.5em;\n        height: 12em;\n        }\n\n        .footer {\n            --bulma-footer-padding: 3rem 1.5rem 3rem;\n        }\n    </style></head><body><section class=\"section\"><div class=\"container\"><h1 class=\"title\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css\"><script src=\"https://kit.fontawesome.com/c2b6fd3803.js\" crossorigin=\"anonymous\"></script><script type=\"module\" src=\"https://cdn.jsdelivr.net/gh/starfederation/datastar@main/bundles/datastar.js\"></script><style>\n        ul.no-bullets {\n        list-style-type: none;\n        }\n\n        .xspinner {\n        padding: 5.5em;\n        height: 12em;\n        }\n\n        .footer {\n            --bulma-footer-padding: 3rem 1.5rem 3rem;\n        }\n    </style></head><body><nav class=\"navbar is-primary has-background-primary\" role=\"navigation\" aria-label=\"main navigation\"><div class=\"navbar-brand\"><a class=\"navbar-item\" href=\"/\"><strong>Go Chat</strong></a> <a role=\"button\" class=\"navbar-burger\" data-class-is-active=\"$_showMenu\" aria-label=\"menu\" aria-expanded=\"false\" data-on-click=\"$_showMenu = !$_showMenu\"><span aria-hidden=\"true\"></span> <span aria-hidden=\"true\"></span> <span aria-hidden=\"true\"></span></a></div><div class=\"navbar-menu\" data-class-is-active=\"$_showMenu\"><div class=\"navbar-start\"><a class=\"navbar-item\" href=\"/\">Home</a></div><div class=\"navbar-end\"><div class=\"navbar-item\"></div></div></div></nav><section class=\"section\"><div class=\"container\"><h1 class=\"title\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout/page.templ`, Line: 37, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout/page.templ`, Line: 61, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -62,7 +62,7 @@ func Page(title string, subtitle string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(subtitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout/page.templ`, Line: 39, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout/page.templ`, Line: 63, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
