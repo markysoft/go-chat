@@ -96,7 +96,7 @@ func (h *Handlers) RoomMessages() http.HandlerFunc {
 
 		log.Printf("Client connected to messages stream with userID: %s", userID)
 		sse := datastar.NewSSE(w, r)
-		patchMessages(h, sse)
+		patchMessages(h, sse, userID)
 		// Create a channel to receive messages from NATS
 		messageChan := make(chan string, 10)
 		// Subscribe to NATS and forward messages to the channel
@@ -126,7 +126,7 @@ func (h *Handlers) RoomMessages() http.HandlerFunc {
 				if message == "" {
 					continue
 				}
-				ctrl := patchMessages(h, sse)
+				ctrl := patchMessages(h, sse, userID)
 				switch ctrl {
 				case 1:
 					continue
@@ -166,13 +166,13 @@ func (h *Handlers) SendMessage() http.HandlerFunc {
 	}
 }
 
-func patchMessages(h *Handlers, sse *datastar.ServerSentEventGenerator) int {
+func patchMessages(h *Handlers, sse *datastar.ServerSentEventGenerator, username string) int {
 	allMessages, err := dal.ListMessagesForRoom(h.db, "Watercooler")
 	if err != nil {
 		log.Printf("Failed to list messages: %v", err)
 		return 1
 	}
-	err = sse.PatchElementTempl(components.Messages(allMessages))
+	err = sse.PatchElementTempl(components.Messages(allMessages, username))
 	if err != nil {
 		log.Printf("Failed to send message to client: %v", err)
 		return 0

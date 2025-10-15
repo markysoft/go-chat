@@ -2,10 +2,28 @@ package components
 
 import "go-star/common/dal"
 
-templ Messages(messages []dal.MessageWithChatter) {
+templ Messages(messages []dal.MessageWithChatter, username string) {
 	<div id="messages" class="column">
 		for _, item := range messages {
-			<p><span class="tag is-primary">{ item.ChatterName }</span> { item.Content }</p>
+			if item.Username == username {
+				<article class="message is-info is-small" style="margin-left: 2rem;">
+					<div class="message-header">
+						<p>{ item.ChatterName }</p>
+					</div>
+					<div class="message-body">
+						{ item.Content }
+					</div>
+				</article>
+			} else {
+				<article class="message is-primary is-small">
+					<div class="message-header">
+						<p>{ item.ChatterName }</p>
+					</div>
+					<div class="message-body">
+						{ item.Content }
+					</div>
+				</article>
+			}
 		}
 	</div>
 }

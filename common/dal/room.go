@@ -14,7 +14,7 @@ func ListMessagesForRoom(db *sql.DB, roomName string) ([]MessageWithChatter, err
 		JOIN chatters c ON m.userId = c.id
 		JOIN rooms r ON m.roomId = r.id
 		WHERE r.name = ?
-		ORDER BY m.timestamp ASC`
+		ORDER BY m.timestamp DESC`
 
 	rows, err := db.Query(query, roomName)
 	if err != nil {
