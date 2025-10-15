@@ -549,7 +549,7 @@ func TestListMessagesForRoom(t *testing.T) {
 	}
 
 	// Test ListMessagesForRoom for Watercooler
-	watercoolerMessages, err := ListMessagesForRoom(db, "Watercooler")
+	watercoolerMessages, err := ListMessagesForRoom(db, watercoolerID)
 	if err != nil {
 		t.Fatalf("ListMessagesForRoom failed: %v", err)
 	}
@@ -593,7 +593,7 @@ func TestListMessagesForRoom(t *testing.T) {
 	}
 
 	// Test ListMessagesForRoom for General (should only have 1 message)
-	generalMessages, err := ListMessagesForRoom(db, "General")
+	generalMessages, err := ListMessagesForRoom(db, generalID)
 	if err != nil {
 		t.Fatalf("ListMessagesForRoom for General failed: %v", err)
 	}
@@ -612,7 +612,7 @@ func TestListMessagesForRoom(t *testing.T) {
 	}
 
 	// Test ListMessagesForRoom for non-existent room
-	emptyMessages, err := ListMessagesForRoom(db, "NonExistentRoom")
+	emptyMessages, err := ListMessagesForRoom(db, 99999) // Use a non-existent room ID
 	if err != nil {
 		t.Fatalf("ListMessagesForRoom for non-existent room failed: %v", err)
 	}

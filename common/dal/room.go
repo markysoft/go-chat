@@ -7,16 +7,15 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func ListMessagesForRoom(db *sql.DB, roomName string) ([]MessageWithChatter, error) {
+func ListMessagesForRoom(db *sql.DB, roomId int64) ([]MessageWithChatter, error) {
 	query := `
 		SELECT m.id, m.userId, m.roomId, m.content, m.timestamp, c.name, c.username
 		FROM messages m
 		JOIN chatters c ON m.userId = c.id
-		JOIN rooms r ON m.roomId = r.id
-		WHERE r.name = ?
+		WHERE m.roomId = ?
 		ORDER BY m.timestamp DESC`
 
-	rows, err := db.Query(query, roomName)
+	rows, err := db.Query(query, roomId)
 	if err != nil {
 		return nil, err
 	}

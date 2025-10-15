@@ -88,6 +88,13 @@ func (h *Handlers) RoomPage() http.HandlerFunc {
 
 func (h *Handlers) RoomMessages() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		roomSignals := &components.RoomSignals{}
+		if err := datastar.ReadSignals(r, roomSignals); err != nil {
+			h.serverError(w, r, fmt.Errorf("failed to read room signals: %w", err))
+			return
+		}
+
 		userID, err := common.GetUserID(w, r)
 		if err != nil {
 			h.serverError(w, r, fmt.Errorf("failed to get or generate user ID: %w", err))
@@ -96,7 +103,7 @@ func (h *Handlers) RoomMessages() http.HandlerFunc {
 
 		log.Printf("Client connected to messages stream with userID: %s", userID)
 		sse := datastar.NewSSE(w, r)
-		patchMessages(h, sse, userID)
+		patchMessages(h, sse, userID, roomSignals.RoomId)
 		// Create a channel to receive messages from NATS
 		messageChan := make(chan string, 10)
 		// Subscribe to NATS and forward messages to the channel
@@ -126,7 +133,7 @@ func (h *Handlers) RoomMessages() http.HandlerFunc {
 				if message == "" {
 					continue
 				}
-				ctrl := patchMessages(h, sse, userID)
+				ctrl := patchMessages(h, sse, userID, roomSignals.RoomId)
 				switch ctrl {
 				case 1:
 					continue
@@ -166,8 +173,8 @@ func (h *Handlers) SendMessage() http.HandlerFunc {
 	}
 }
 
-func patchMessages(h *Handlers, sse *datastar.ServerSentEventGenerator, username string) int {
-	allMessages, err := dal.ListMessagesForRoom(h.db, "Watercooler")
+func patchMessages(h *Handlers, sse *datastar.ServerSentEventGenerator, username string, roomId int64) int {
+	allMessages, err := dal.ListMessagesForRoom(h.db, roomId)
 	if err != nil {
 		log.Printf("Failed to list messages: %v", err)
 		return 1
