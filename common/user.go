@@ -1,4 +1,4 @@
-package main
+package common
 
 import (
 	"net/http"
@@ -11,8 +11,8 @@ func generateGUID() string {
 	return uuid.New().String()
 }
 
-// getUserID checks for existing userId cookie or creates a new one
-func getUserID(w http.ResponseWriter, r *http.Request) (string, error) {
+// GetUserID checks for existing userId cookie or creates a new one
+func GetUserID(w http.ResponseWriter, r *http.Request) (string, error) {
 	// Check for existing cookie
 	cookie, err := r.Cookie("chat-userid")
 	if err == nil && cookie.Value != "" {

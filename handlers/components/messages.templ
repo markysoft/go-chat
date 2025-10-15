@@ -1,0 +1,11 @@
+package components
+
+import "go-star/dal"
+
+templ Messages(messages []dal.MessageWithChatter) {
+	<div id="messages" class="column">
+		for _, item := range messages {
+			<p><span class="tag is-primary">{ item.ChatterName }</span> { item.Content }</p>
+		}
+	</div>
+}

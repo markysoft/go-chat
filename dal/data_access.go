@@ -283,3 +283,19 @@ func ListRooms(db *sql.DB) ([]Room, error) {
 
 	return rooms, nil
 }
+
+// GetRoom retrieves a specific room by ID from the database
+func GetRoom(db *sql.DB, roomID int64) (*Room, error) {
+	query := `SELECT id, name, description FROM rooms WHERE id = ?`
+
+	var room Room
+	err := db.QueryRow(query, roomID).Scan(&room.ID, &room.Name, &room.Description)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("room with ID %d not found", roomID)
+		}
+		return nil, err
+	}
+
+	return &room, nil
+}

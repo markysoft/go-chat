@@ -1,0 +1,40 @@
+package components
+
+import (
+	"github.com/starfederation/datastar-go/datastar"
+	"go-star/dal"
+	"go-star/layout"
+)
+
+type RoomSignals struct {
+	RoomId int64 `json:"roomId"`
+	UserId int64 `json:"userId"`
+}
+
+templ RoomPage(room dal.Room, user dal.Chatter, signals RoomSignals) {
+	@layout.Page("Room: "+room.Name, "Chat Room") {
+		<div class="room">
+			<h2 class="subtitle">{ room.Description }</h2>
+		</div>
+		<p>Welcome { user.Name }</p>
+		<div data-signals={ templ.JSONString(signals) } data-on-load={ datastar.GetSSE("/room/messages") }></div>
+		<div class="columns">
+			<div class="column">
+				<div class="content">
+					<div class="field">
+						<label class="label">Enter Message:</label>
+						<div class="control" data-on-keydown__window="evt.key === 'Enter' && @post('/room/message') && ($message = '')">
+							<input class="input" type="text" data-signals-message data-bind-message placeholder="Say something"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="column" data-on-load="@get('/messages')">
+				<h2 class="label">Messages so far:</h2>
+				<div class="box">
+					<div id="messages" class="column"></div>
+				</div>
+			</div>
+		</div>
+	}
+}

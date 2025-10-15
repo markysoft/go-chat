@@ -53,7 +53,10 @@ func main() {
 	r.Get("/messages", app.MessagesHandler())
 
 	rh := handlers.NewHandlers(logger, db, nc)
-	r.Get("/rooms", rh.RoomPage())
+	r.Get("/rooms", rh.RoomsPage())
+	r.Get("/room/{id:\\d+}", rh.RoomPage())
+	r.Get("/room/messages", rh.RoomMessages())
+	r.Post("/room/message", rh.SendMessage())
 
 	log.Printf("Starting server on http://localhost:%d", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {

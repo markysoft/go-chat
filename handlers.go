@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-star/dal"
+	"go-star/common"
 	"log"
 	"net/http"
 
@@ -48,7 +49,7 @@ func (app *application) MessageHandler() http.HandlerFunc {
 }
 
 func (app *application) getChatter(w http.ResponseWriter, r *http.Request) (*dal.Chatter, error) {
-	userID, err := getUserID(w, r)
+	userID, err := common.GetUserID(w, r)
 	if err != nil {
 		app.serverError(w, r, fmt.Errorf("failed to initialize user session: %w", err))
 		return nil, err
@@ -69,7 +70,7 @@ func (app *application) getChatter(w http.ResponseWriter, r *http.Request) (*dal
 func (app *application) MessagesHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check for userId cookie or generate a new one
-		userID, err := getUserID(w, r)
+		userID, err := common.GetUserID(w, r)
 		if err != nil {
 			app.serverError(w, r, fmt.Errorf("failed to get or generate user ID: %w", err))
 			return
