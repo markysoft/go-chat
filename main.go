@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"go-star/common/dal"
-	"go-star/routes"
 	"log/slog"
 	"net/http"
 	"os"
-
+	
 	"go-star/common"
+	"go-star/common/dal"
+	"go-star/routes"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	}
 
 	r := routes.Register(logger, db, nc)
-	logger.Info("Starting server", "url", fmt.Sprintf("http://localhost:%d", port))
+	logger.Info("Starting server", "host","http://localhost", "port", port)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {
 		panic(err)
