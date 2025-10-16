@@ -46,7 +46,7 @@ func (app *Handlers) serverError(w http.ResponseWriter, r *http.Request, err err
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-func (h *Handlers) RoomsPage() http.HandlerFunc {
+func (h *Handlers) ListRooms() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		roomList, err := dal.ListRooms(h.db)
 		if err != nil {
@@ -86,7 +86,7 @@ func (h *Handlers) RoomPage() http.HandlerFunc {
 	}
 }
 
-func (h *Handlers) RoomMessages() http.HandlerFunc {
+func (h *Handlers) ListMessages() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		roomSignals := &components.RoomSignals{}

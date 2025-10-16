@@ -16,9 +16,9 @@ func Register(logger *slog.Logger, db *sql.DB, nc *nats.Conn) *chi.Mux {
 
 	rh := handlers.NewHandlers(logger, db, nc)
 
-	r.Get("/", rh.RoomsPage())
+	r.Get("/", rh.ListRooms())
 	r.Get("/room/{id:\\d+}", rh.RoomPage())
-	r.Get("/room/messages", rh.RoomMessages())
+	r.Get("/room/messages", rh.ListMessages())
 	r.Post("/room/message", rh.SendMessage())
 
 	return r
