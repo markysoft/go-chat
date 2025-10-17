@@ -78,3 +78,32 @@ func GetRoom(db *sql.DB, roomID int64) (*Room, error) {
 
 	return &room, nil
 }
+
+// InsertRoom adds a new room to the rooms table
+func InsertRoom(db *sql.DB, name, description string) (*Room, error) {
+	// Validate input
+	if name == "" {
+		return nil, fmt.Errorf("room name cannot be empty")
+	}
+
+	stmt := `INSERT INTO rooms (name, description) VALUES (?, ?)`
+	result, err := db.Exec(stmt, name, description)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the ID of the inserted room
+	roomID, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	// Return the complete room
+	room := &Room{
+		ID:          roomID,
+		Name:        name,
+		Description: description,
+	}
+
+	return room, nil
+}

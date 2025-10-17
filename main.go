@@ -5,8 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	
+
 	"go-star/common"
+	"go-star/common/bots"
 	"go-star/common/dal"
 	"go-star/routes"
 )
@@ -27,6 +28,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	bot := bots.NewPosiBot(db, "PosiBot", "posibot", 1)
+	go bot.Listen(db, nc)
 
 	r := routes.Register(logger, db, nc)
 	logger.Info("Starting server", "host","http://localhost", "port", port)
@@ -34,4 +37,5 @@ func main() {
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {
 		panic(err)
 	}
+
 }

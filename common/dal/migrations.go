@@ -79,7 +79,7 @@ const (
 		userId INTEGER NOT NULL, 
 		roomId INTEGER NOT NULL,
 		content TEXT,
-		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+		timestamp DATETIME DEFAULT (datetime('now', 'subsec')),
 		FOREIGN KEY(userId) REFERENCES chatters(id),
 		FOREIGN KEY(roomId) REFERENCES rooms(id)`
 )

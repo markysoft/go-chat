@@ -157,6 +157,8 @@ func (h *Handlers) SendMessage() http.HandlerFunc {
 			h.serverError(w, r, err)
 			return
 		}
+		
+		message.Username = chatter.Username
 
 		_, err = dal.InsertMessage(h.db, chatter.ID, 1, message.Message)
 		if err != nil {
@@ -164,7 +166,8 @@ func (h *Handlers) SendMessage() http.HandlerFunc {
 			return
 		}
 
-		err = h.nc.Publish(subject, []byte(message.Message))
+		formattedMessage := fmt.Sprintf("%s:%s", message.Username, message.Message)
+		err = h.nc.Publish(subject, []byte(formattedMessage))
 		if err != nil {
 			h.serverError(w, r, fmt.Errorf("failed to publish message: %w", err))
 			return
