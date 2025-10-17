@@ -6,6 +6,7 @@ import (
 	"go-star/common/dal"
 	"log"
 	"strings"
+	"unicode"
 
 	"github.com/nats-io/nats.go"
 )
@@ -40,7 +41,7 @@ func ensureBotUserExists(db *sql.DB, bot ChatBot) (int64, error) {
 	chatter, _ := dal.GetChatterByUsername(db, bot.Username)
 	if chatter == nil {
 		var err error
-		chatter, err = dal.InsertChatter(db, bot.Username, bot.Name) 
+		chatter, err = dal.InsertChatter(db, bot.Username, bot.Name)
 		if err != nil {
 			log.Printf("failed to create new chatter: %v", err)
 			return 0, err
@@ -49,9 +50,46 @@ func ensureBotUserExists(db *sql.DB, bot ChatBot) (int64, error) {
 	return chatter.ID, nil
 }
 
-func (bot *ChatBot) GenerateResponse(userMessage dal.MessageWithChatter) string {
-	// Simple positive response generation logic
-	response := "That's great to hear! Keep up the positive vibes!"
+// sarkyReply converts a string to alternating case (every other letter capitalized)
+func sarkyReply(input string) string {
+	runes := []rune(input)
+	letterCount := 0
+
+	for i, r := range runes {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+			if letterCount%2 == 0 {
+				runes[i] = unicode.ToLower(r)
+			} else {
+				runes[i] = unicode.ToUpper(r)
+			}
+			letterCount++
+		}
+	}
+
+	return string(runes)
+}
+
+func (bot *ChatBot) GenerateResponse(userMessage string) string {
+	// Split the message on ':' to get username and message
+	parts := strings.SplitN(userMessage, ":", 2)
+	var message string
+
+	if len(parts) == 2 {
+		userName := parts[0] // userName is available if needed
+		message = parts[1]
+		_ = userName // Suppress unused variable warning
+	} else {
+		// If no colon found, treat the whole thing as the message
+		message = userMessage
+	}
+
+	var response string
+	if bot.Vibe == "positive" {
+		response = sarkyReply(message)
+	} else {
+		// Simple positive response generation logic
+		response = "That's great to hear! Keep up the positive vibes!"
+	}
 
 	// Store the last response
 	bot.LastResponses = append(bot.LastResponses, response)
@@ -98,7 +136,7 @@ func (bot *ChatBot) Listen(db *sql.DB, nc *nats.Conn) error {
 			continue
 		}
 
-		response := bot.GenerateResponse(dal.MessageWithChatter{Content: message})
+		response := bot.GenerateResponse(message)
 		dal.InsertMessage(db, bot.Id, bot.RoomId, response)
 
 		formattedMessage := fmt.Sprintf("%s:%s", bot.Username, response)
